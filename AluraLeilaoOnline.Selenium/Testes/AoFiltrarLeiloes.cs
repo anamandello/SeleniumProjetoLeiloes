@@ -29,9 +29,11 @@ namespace AluraLeilaoOnline.Selenium.Testes
             {
                 "Arte",
                 "Coleções"
-            });
+            }, "", true);
 
             //assert
+
+            Assert.Contains("Resultado da pesquisa", driver.PageSource);
 
         }
     }

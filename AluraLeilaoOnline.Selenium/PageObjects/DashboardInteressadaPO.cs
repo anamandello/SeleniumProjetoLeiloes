@@ -1,5 +1,7 @@
-﻿using OpenQA.Selenium;
+﻿using AluraLeilaoOnline.Selenium.Helpers;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
+using OpenQA.Selenium.Support.UI;
 
 namespace AluraLeilaoOnline.Selenium.PageObjects
 {
@@ -19,36 +21,27 @@ namespace AluraLeilaoOnline.Selenium.PageObjects
             byLogoutLink = By.Id("logout");
             byMeuPerfilLink = By.Id("meu-perfil");
             bySelectCategorias = By.ClassName("select-wrapper");
+            byInputTermo = By.Id("termo");
+            byInputAndamento = By.ClassName("switch");
+            byBotaoPesquisar = By.CssSelector("form>button.btn");
         }
 
         public void PesquisarLeiloes(
-            List<string> categorias)
+            List<string> categorias, string termo, bool emAndamento)
         {
-            var selectWrapper = driver.FindElement(bySelectCategorias);
-            selectWrapper.Click();
-
-            var opcoes = selectWrapper.FindElements(By.CssSelector("li>span")).ToList();
-
-            opcoes.ForEach(o =>
-            {
-                o.Click();
-            });
+            var select = new SelectMaterialize(driver, bySelectCategorias);
+            select.DeselectAll();
 
             categorias.ForEach(categ =>
             {
-                opcoes.Where(o => o.Text.Contains(categ))
-                .ToList()
-                .ForEach(o =>
-                {
-                    o.Click();
-                });
+                select.SelectByText(categ);
             });
-
-            selectWrapper.FindElement(By.TagName("li"))
-                .SendKeys(Keys.Tab);
-
-            Thread.Sleep(8000);
-          
+            driver.FindElement(byInputTermo).SendKeys(termo);
+            if (emAndamento)
+            {
+                driver.FindElement(byInputAndamento).Click();
+            }
+            driver.FindElement(byBotaoPesquisar).Click();
         }
 
         public void EfetuarLogout()
